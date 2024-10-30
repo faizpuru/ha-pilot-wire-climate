@@ -1,0 +1,62 @@
+{
+  "title": "Pilot Wire Thermostat",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add Pilot Wire Thermostat",
+        "description": "Create a climate entity that controls the temperature",
+        "data": {
+          "presets": "Select Entity",
+          "temperature": "Temperature Sensor",
+          "power": "Power Sensor",
+          "additional_modes": "Additional Modes"
+        },
+        "data_description": {
+          "presets": "Select entity used to control the presets.",
+          "temperature": "Temperature sensor that reflects the current temperature.",
+          "power": "Power sensor used to monitor heater activity.",
+          "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C)."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "presets": "Select Entity",
+          "temperature": "Temperature Sensor",
+          "power": "Power Sensor",
+          "additional_modes": "Additional Modes"
+        },
+        "data_description": {
+          "presets": "Select entity used to control the presets.",
+          "temperature": "Temperature sensor that reflects the current temperature.",
+          "power": "Power sensor used to monitor heater activity.",
+          "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C)."
+        }
+      }
+    }
+  },
+  "services": {
+    "reload": {
+      "name": "Reload",
+      "description": "Reloads pilot wire thermostats from the YAML configuration."
+    }
+  },
+  "entity": {
+    "climate": {
+      "pilot_wire": {
+        "name": "Thermostat",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "comfort_-1": "Comfort -1 \u00b0C",
+              "comfort_-2": "Comfort -2 \u00b0C"
+            }
+          }
+        }
+      }
+    }
+  }
+}
