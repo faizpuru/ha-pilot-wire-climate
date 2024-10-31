@@ -51,8 +51,8 @@
         "state_attributes": {
           "preset_mode": {
             "state": {
-              "comfort_-1": "Confort -1 \u00b0C",
-              "comfort_-2": "Confort -2 \u00b0C"
+              "comfort_1": "Confort -1 \u00b0C",
+              "comfort_2": "Confort -2 \u00b0C"
             }
           }
         }
