@@ -5,8 +5,8 @@
         "state_attributes": {
           "preset_mode": {
             "state": {
-              "comfort_-1": "mdi:numeric-1-circle",
-              "comfort_-2": "mdi:numeric-2-circle",
+              "comfort_1": "mdi:numeric-1-circle",
+              "comfort_2": "mdi:numeric-2-circle",
               "none": "mdi:power"
             }
           }

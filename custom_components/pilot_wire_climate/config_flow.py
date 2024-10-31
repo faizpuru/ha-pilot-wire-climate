@@ -36,7 +36,7 @@ OPTIONS_SCHEMA = {
 
 CONFIG_SCHEMA = {
     vol.Required(CONF_PRESET): selector.EntitySelector(
-        selector.EntitySelectorConfig(domain=SELECT_DOMAIN)
+        selector.EntitySelectorConfig(domain=[SELECT_DOMAIN])
     ),
     **OPTIONS_SCHEMA,
 }
