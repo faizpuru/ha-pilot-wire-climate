@@ -316,7 +316,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set new target hvac mode."""
-        value = VALUE_FROST
+        value = None
         if hvac_mode == HVACMode.HEAT:
             value = VALUE_COMFORT
         elif hvac_mode == HVACMode.OFF:
@@ -326,7 +326,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
     @property
     def hvac_mode(self) -> HVACMode | None:
         """Return hvac operation ie. heat, off mode."""
-        if self.preset_mode:
+        if self.preset_mode is not None:
             return HVACMode.OFF if self.preset_mode == PRESET_NONE else HVACMode.HEAT
         return None
 
@@ -351,7 +351,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
     def _async_mode_changed(self, event: Event[EventStateChangedData]) -> None:
         """Handle preset switch state changes."""
         new_state = event.data["new_state"]
-        if new_state is None:
+        if new_state is None or new_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
             return
         self._async_update_mode(new_state)
         self.async_write_ha_state()
