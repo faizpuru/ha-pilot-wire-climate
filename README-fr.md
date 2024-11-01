@@ -4,7 +4,7 @@
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)](https://github.com/faizpuru/ha-pilot-wire-climate/blob/master/README-fr.md)
 
 ## Vue d'ensemble
-Cette intégration pour Home Assistant simplifie l'installation de modules fil pilote pour les systèmes de chauffage, en convertissant automatiquement plusieurs entités (par ex., `select` et `power`) en une seule entité `climate`. Une entité `sensor` de température peut également être ajoutée en option. Cette intégration est idéale pour contrôler et surveiller les modules fil pilote de chauffage.
+Cette intégration pour Home Assistant simplifie l'installation de modules fil pilote pour les systèmes de chauffage, en convertissant automatiquement plusieurs entités (`select` et `power`) en une seule entité `climate`. Une entité `sensor` de température peut également être ajoutée en option. Cette intégration est idéale pour contrôler et surveiller les modules fil pilote de chauffage.
 
 ### Caractéristiques principales
 - Convertit les entités `select` et `power` en une seule entité `climate`.
@@ -13,7 +13,7 @@ Cette intégration pour Home Assistant simplifie l'installation de modules fil p
 - Prise en charge optionnelle pour une entité `sensor` de température.
 
 ### Compatibilité
-L'intégration est compatible avec les appareils suivants :
+L'intégration est compatible avec les appareils suivants ou tout thermostat contrôlable avec une entité de type select:
 - **Equation** : SIN-4-FP-21_EQU
 - **Legrand** : 064882
 - **NodOn** : SIN-4-FP-20, SIN-4-FP-21

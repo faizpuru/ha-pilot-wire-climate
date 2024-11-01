@@ -4,7 +4,7 @@
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)](https://github.com/faizpuru/ha-pilot-wire-climate/blob/master/README-fr.md)
 
 ## Overview
-This Home Assistant integration simplifies the setup of pilot wire modules for heating systems, providing seamless conversion of multiple entities (e.g., `select` and `power`) into a unified `climate` entity. An optional temperature `sensor` entity can also be added. This integration is ideal for controlling pilot wire heating modules, enabling streamlined control and monitoring of heating states.
+This Home Assistant integration simplifies the setup of pilot wire modules for heating systems, providing seamless conversion of multiple entities (`select` and `power`) into a unified `climate` entity. An optional temperature `sensor` entity can also be added. This integration is ideal for controlling pilot wire heating modules, enabling streamlined control and monitoring of heating states.
 
 ### Key Features
 - Converts `select` and `power` entities into a single `climate` entity.
@@ -13,7 +13,7 @@ This Home Assistant integration simplifies the setup of pilot wire modules for h
 - Optional support for temperature `sensor` entities.
 
 ### Compatibility
-The integration is compatible with the following devices:
+The integration is compatible with the following devices or any climate manageable with a select entity :
 - **Equation**: SIN-4-FP-21_EQU
 - **Legrand**: 064882
 - **NodOn**: SIN-4-FP-20, SIN-4-FP-21
