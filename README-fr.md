@@ -73,3 +73,17 @@ climate:
     power: sensor.radiateur_puissance
     temperature: sensor.salon_temperature
     additional_modes: true
+  ```
+
+## 🤝 Contributions
+Les contributions sont les bienvenues ! N'hésitez pas à :
+
+- 🐛 Signaler des bugs
+- 💡 Suggérer des améliorations
+- 🔀 Soumettre des pull requests
+
+## 📄 Licence
+Ce projet est sous licence MIT. Consultez le fichier LICENSE pour plus de détails.
+
+---
+Si vous trouvez cette intégration utile, pensez à lui donner une ⭐️ sur GitHub !
