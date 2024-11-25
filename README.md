@@ -74,3 +74,18 @@ climate:
     power: sensor.heater_power
     temperature: sensor.living_room_temperature
     additional_modes: true
+  ```
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to:
+- 🐛 Report bugs
+- 💡 Suggest improvements
+- 🔀 Submit pull requests
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+If you find this integration helpful, please consider giving it a ⭐️ on GitHub!
