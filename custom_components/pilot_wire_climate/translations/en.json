@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Add Pilot Wire Thermostat",
-        "description": "Create a climate entity that controls the temperature",
+        "description": "Create a climate entity that controls a pilot wire module. \n\n Once configured, the climate entity will appear in the Helpers tab. It will be automatically linked to the device of the select entity you chose during setup.",
         "data": {
           "presets": "Select Entity",
           "temperature": "Temperature Sensor",

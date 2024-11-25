@@ -7,6 +7,8 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.components.select import DOMAIN as SELECT_DOMAIN
+from homeassistant.components.input_select import DOMAIN as INPUT_SELECT_DOMAIN
+
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.helpers import entity_registry as er
@@ -36,7 +38,8 @@ OPTIONS_SCHEMA = {
 
 CONFIG_SCHEMA = {
     vol.Required(CONF_PRESET): selector.EntitySelector(
-        selector.EntitySelectorConfig(domain=[SELECT_DOMAIN])
+        selector.EntitySelectorConfig(
+            domain=[SELECT_DOMAIN, INPUT_SELECT_DOMAIN])
     ),
     **OPTIONS_SCHEMA,
 }

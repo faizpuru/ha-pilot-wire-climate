@@ -36,6 +36,18 @@ L'intégration est compatible avec les appareils suivants ou tout thermostat con
 ## Configuration
 Pour configurer cette intégration, vous pouvez l'ajouter via l'interface utilisateur de Home Assistant ou configurer manuellement via YAML.
 
+> [!IMPORTANT]  
+> Cette intégration est implémentée comme un **Helper** dans Home Assistant et non comme une intégration personnalisée classique.
+> 
+> Pour initialiser ce helper, suivez ce chemin dans votre interface Home Assistant :
+> 1. Paramètres
+> 2. Appareils et Services
+> 3. Entrées
+> 4. Créer une entrée
+> 5. Thermostat Fil Pilote
+>
+> Une fois configuré, l'entité climate apparaîtra dans l'onglet Entrées. Elle sera également automatiquement liée à l'appareil de l'entité select choisie lors de la configuration.
+
 ## Configuration YAML
 
 Bien que vous puissiez utiliser `yaml`, il est recommandé d'utiliser l'interface utilisateur, car de plus en plus d'intégrations sont adaptées à cette méthode. Toutes les options sont disponibles dans l'interface utilisateur.
