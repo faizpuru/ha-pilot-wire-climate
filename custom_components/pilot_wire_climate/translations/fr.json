@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Ajouter un thermostat Fil Pilote",
-        "description": "Crée une entité climate qui contrôle la température",
+        "description": "Crée une entité climate qui contrôle un module fil pilote. \n\n Une fois configuré, l'entité climate apparaîtra dans l'onglet Entrées. Elle sera également automatiquement liée à l'appareil de l'entité select choisie lors de la configuration.",
         "data": {
           "presets": "Entité de sélection",
           "temperature": "Capteur de température",

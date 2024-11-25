@@ -36,6 +36,19 @@ The integration is compatible with the following devices or any climate manageab
 ## Configuration
 To set up this integration, you can either add it through the Home Assistant UI or configure it manually. Below is a sample `configuration.yaml` setup.
 
+> [!IMPORTANT]  
+> This integration is implemented as a **Helper** in Home Assistant and is not a full-fledged custom integration. 
+> 
+> To initialize this helper, follow this path in your Home Assistant interface:
+> 1. Settings
+> 2. Devices and Services
+> 3. Helpers
+> 4. Create Helper
+> 5. Pilot Wire Thermostat
+>
+> Once configured, the climate entity will appear in the Helpers tab. It will be automatically linked to the device of the select entity you chose during setup.
+
+
 ## YAML configuration
 
 If you prefer to use `yaml`, you can, but it's not recommended as more and more integrations are moved to the UI. All the options are available in the UI.
