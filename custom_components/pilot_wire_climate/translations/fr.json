@@ -9,13 +9,15 @@
           "presets": "Entité de sélection",
           "temperature": "Capteur de température",
           "power": "Capteur de puissance",
-          "additional_modes": "Modes supplémentaires"
+          "additional_modes": "Modes supplémentaires",
+          "power_threshold": "Seuil de puissance"
         },
         "data_description": {
           "presets": "Entité de sélection utilisée pour contrôler les modes.",
           "temperature": "Capteur de température reflétant la température actuelle.",
           "power": "Capteur de puissance utilisé pour surveiller l'activité du chauffage.",
-          "additional_modes": "Active les modes supplémentaires (Confort -1 \u00b0C et Confort -2 \u00b0C)."
+          "additional_modes": "Active les modes supplémentaires (Confort -1 \u00b0C et Confort -2 \u00b0C).",
+          "power_threshold": "Seuil de puissance à partir duquel le radiateur est considéré en chauffe."
         }
       }
     }
@@ -27,13 +29,15 @@
           "presets": "Entité de sélection",
           "temperature": "Capteur de température",
           "power": "Capteur de puissance",
-          "additional_modes": "Modes supplémentaires"
+          "additional_modes": "Modes supplémentaires",
+          "power_threshold": "Seuil de puissance"
         },
         "data_description": {
           "presets": "Entité de sélection utilisée pour contrôler les modes.",
           "temperature": "Capteur de température reflétant la température actuelle.",
           "power": "Capteur de puissance utilisé pour surveiller l'activité du chauffage.",
-          "additional_modes": "Active les modes supplémentaires (Confort -1 \u00b0C et Confort -2 \u00b0C)."
+          "additional_modes": "Active les modes supplémentaires (Confort -1 \u00b0C et Confort -2 \u00b0C).",
+          "power_threshold": "Seuil de puissance à partir duquel le radiateur est considéré en chauffe."
         }
       }
     }

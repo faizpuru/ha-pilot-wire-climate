@@ -4,6 +4,6 @@ CONF_PRESET = "presets"
 CONF_TEMP = "temperature"
 CONF_POWER = "power"
 CONF_ADDITIONAL_MODES = "additional_modes"
+CONF_POWER_THRESHOLD = "power_threshold"
 PRESET_COMFORT_1 = "comfort_1"
 PRESET_COMFORT_2 = "comfort_2"
-POWER_THRESHOLD = 0

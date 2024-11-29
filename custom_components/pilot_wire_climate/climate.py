@@ -30,8 +30,8 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from . import DOMAIN, PLATFORMS
-from .const import (CONF_ADDITIONAL_MODES, CONF_POWER, CONF_PRESET, CONF_TEMP,
-                    DEFAULT_NAME, POWER_THRESHOLD, PRESET_COMFORT_1,
+from .const import (CONF_ADDITIONAL_MODES, CONF_POWER, CONF_POWER_THRESHOLD, CONF_PRESET, CONF_TEMP,
+                    DEFAULT_NAME, PRESET_COMFORT_1,
                     PRESET_COMFORT_2)
 
 _LOGGER = logging.getLogger(__name__)
@@ -53,6 +53,7 @@ PLATFORM_SCHEMA_COMMON = vol.Schema(
         vol.Optional(CONF_ADDITIONAL_MODES, default=True): cv.boolean,
         vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_UNIQUE_ID): cv.string,
+        vol.Optional(CONF_POWER_THRESHOLD): cv.positive_float,
     }
 )
 
@@ -99,6 +100,7 @@ async def _async_setup_config(
     temp_entity_id: str | None = config.get(CONF_TEMP)
     power_entity_id: str | None = config.get(CONF_POWER)
     additional_modes: bool = config.get(CONF_ADDITIONAL_MODES)
+    power_threshold: float = config.get(CONF_POWER_THRESHOLD)
     async_add_entities(
         [
             PilotWireClimate(
@@ -108,6 +110,7 @@ async def _async_setup_config(
                 temp_entity_id,
                 power_entity_id,
                 additional_modes,
+                power_threshold,
                 unique_id,
             )
         ]
@@ -129,6 +132,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         temp_entity_id: str | None,
         power_entity_id: str | None,
         additional_modes: bool,
+        power_threshold: float,
         unique_id: str | None,
     ) -> None:
         """Initialize the climate device."""
@@ -155,6 +159,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         self.temp_entity_id = temp_entity_id
         self.power_entity_id = power_entity_id
         self.additional_modes = additional_modes
+        self._power_threshold = power_threshold
         self._cur_temperature = None
         self._cur_power = None
         self._cur_mode = None
@@ -245,9 +250,14 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         value = None
         if self._cur_power:
             value = HVACAction.IDLE
-            if self._cur_power > POWER_THRESHOLD:
+            if self._cur_power > self.power_threshold:
                 value = HVACAction.HEATING
         return value
+
+    @property
+    def power_threshold(self) -> str:
+        """Return the unit of measurement."""
+        return 0 if self._power_threshold is None else self._power_threshold
 
     @property
     def temperature_unit(self) -> str:
