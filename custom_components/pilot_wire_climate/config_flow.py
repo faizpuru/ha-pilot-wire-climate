@@ -17,8 +17,9 @@ from homeassistant.helpers.schema_config_entry_flow import (
     SchemaConfigFlowHandler, SchemaFlowFormStep,
     wrapped_entity_config_entry_title)
 
-from .climate import (CONF_ADDITIONAL_MODES, CONF_POWER, CONF_PRESET,
-                      CONF_TEMP, DOMAIN)
+
+from .const import (CONF_ADDITIONAL_MODES, CONF_POWER, CONF_PRESET,
+                    CONF_TEMP, DOMAIN, CONF_POWER_THRESHOLD)
 
 OPTIONS_SCHEMA = {
     vol.Optional(CONF_TEMP): selector.EntitySelector(
@@ -34,6 +35,15 @@ OPTIONS_SCHEMA = {
         )
     ),
     vol.Optional(CONF_ADDITIONAL_MODES, default=True): selector.BooleanSelector(),
+    vol.Optional(CONF_POWER_THRESHOLD, default=0): selector.NumberSelector(
+        selector.NumberSelectorConfig(
+            min=0,
+            step=1,
+            unit_of_measurement="W",
+            mode=selector.NumberSelectorMode.BOX
+        )
+    ),
+
 }
 
 CONFIG_SCHEMA = {

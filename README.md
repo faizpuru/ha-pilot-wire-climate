@@ -10,8 +10,9 @@ This Home Assistant integration simplifies the setup of pilot wire modules for h
 - Converts `select` and `power` entities into a single `climate` entity.
 - Utilizes the `select` entity to adjust the pilot wire preset modes.
 - Uses the `power` entity to detect whether the heating is on or off.
+- Configurable power threshold to determine heating state.
 - Optional support for temperature `sensor` entities.
-
+- 
 ### Compatibility
 The integration is compatible with the following devices or any climate manageable with a select entity :
 - **Equation**: SIN-4-FP-21_EQU
@@ -60,8 +61,9 @@ If you prefer to use `yaml`, you can, but it's not recommended as more and more 
 | `power`            | string  | no       | Power sensor to detect whether the heating is on or off                                                                   |
 | `temperature`      | string  | no       | Temperature sensor id (for display)                                                                                       |
 | `additional_modes` | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset)                                                                    |
-| `name`             | string  | no       | Name to use in the frontend.                                                                                              |
-| `unique_id`        | string  | no       | An ID that uniquely identifies this climate. If two climates have the same unique ID, Home Assistant will raise an error. |
+| `power_threshold`  | integer | no       | Power threshold (in watts) above which the heater is considered to be heating                                             |
+| `name`            | string  | no       | Name to use in the frontend                                                                                              |
+| `unique_id`        | string  | no       | An ID that uniquely identifies this climate. If two climates have the same unique ID, Home Assistant will raise an error |
 
 The unique id is recommended to allow icon, entity_id or name changes from the UI.
 
@@ -72,6 +74,7 @@ climate:
     unique_id: living_room_heater_climate
     presets: select.heater_preset
     power: sensor.heater_power
+    power_threshold: 10
     temperature: sensor.living_room_temperature
     additional_modes: true
   ```
