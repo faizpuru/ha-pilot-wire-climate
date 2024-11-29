@@ -12,7 +12,7 @@ This Home Assistant integration simplifies the setup of pilot wire modules for h
 - Uses the `power` entity to detect whether the heating is on or off.
 - Configurable power threshold to determine heating state.
 - Optional support for temperature `sensor` entities.
-- 
+
 ### Compatibility
 The integration is compatible with the following devices or any climate manageable with a select entity :
 - **Equation**: SIN-4-FP-21_EQU
