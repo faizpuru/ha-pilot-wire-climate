@@ -243,15 +243,17 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
     def update(self) -> None:
         """Update unit attributes."""
 
-    # Temperature
     @property
     def hvac_action(self) -> str:
         """Return the unit of measurement."""
         value = None
-        if self._cur_power:
-            value = HVACAction.IDLE
+        if self._cur_power is not None:
             if self._cur_power > self.power_threshold:
                 value = HVACAction.HEATING
+            elif self.preset_mode == PRESET_NONE:
+                value = HVACAction.OFF
+            else:
+                value = HVACAction.IDLE
         return value
 
     @property
