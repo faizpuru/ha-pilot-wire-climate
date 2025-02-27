@@ -16,10 +16,11 @@ from homeassistant.helpers import selector
 from homeassistant.helpers.schema_config_entry_flow import (
     SchemaConfigFlowHandler, SchemaFlowFormStep,
     wrapped_entity_config_entry_title)
-
+from homeassistant.components.climate import (PRESET_AWAY, PRESET_COMFORT,
+                                              PRESET_ECO, PRESET_NONE)
 
 from .const import (CONF_ADDITIONAL_MODES, CONF_POWER, CONF_PRESET,
-                    CONF_TEMP, DOMAIN, CONF_POWER_THRESHOLD)
+                    CONF_TEMP, DOMAIN, CONF_POWER_THRESHOLD, CONF_DEFAULT_PRESET, DEFAULT_DEFAULT_PRESET, PRESET_COMFORT_1, PRESET_COMFORT_2)
 
 OPTIONS_SCHEMA = {
     vol.Optional(CONF_TEMP): selector.EntitySelector(
@@ -41,6 +42,13 @@ OPTIONS_SCHEMA = {
             step=1,
             unit_of_measurement="W",
             mode=selector.NumberSelectorMode.BOX
+        )
+    ),
+    vol.Optional(CONF_DEFAULT_PRESET, default=DEFAULT_DEFAULT_PRESET): selector.SelectSelector(
+        selector.SelectSelectorConfig(
+            options=[PRESET_COMFORT, PRESET_ECO, PRESET_AWAY,
+                     PRESET_COMFORT_1, PRESET_COMFORT_2],
+            mode=selector.SelectSelectorMode.DROPDOWN,
         )
     ),
 
