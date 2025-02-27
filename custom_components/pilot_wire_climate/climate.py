@@ -32,7 +32,7 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from . import DOMAIN, PLATFORMS
 from .const import (CONF_ADDITIONAL_MODES, CONF_POWER, CONF_POWER_THRESHOLD, CONF_PRESET, CONF_TEMP,
                     DEFAULT_NAME, PRESET_COMFORT_1,
-                    PRESET_COMFORT_2)
+                    PRESET_COMFORT_2, CONF_DEFAULT_PRESET, DEFAULT_DEFAULT_PRESET)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -54,6 +54,7 @@ PLATFORM_SCHEMA_COMMON = vol.Schema(
         vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_UNIQUE_ID): cv.string,
         vol.Optional(CONF_POWER_THRESHOLD): cv.positive_float,
+        vol.Optional(CONF_DEFAULT_PRESET, default=DEFAULT_DEFAULT_PRESET): vol.In([PRESET_COMFORT, PRESET_ECO, PRESET_AWAY, PRESET_COMFORT_1, PRESET_COMFORT_2]),
     }
 )
 
@@ -101,6 +102,7 @@ async def _async_setup_config(
     power_entity_id: str | None = config.get(CONF_POWER)
     additional_modes: bool = config.get(CONF_ADDITIONAL_MODES)
     power_threshold: float = config.get(CONF_POWER_THRESHOLD)
+    default_preset: str | None = config.get(CONF_DEFAULT_PRESET)
     async_add_entities(
         [
             PilotWireClimate(
@@ -111,6 +113,7 @@ async def _async_setup_config(
                 power_entity_id,
                 additional_modes,
                 power_threshold,
+                default_preset,
                 unique_id,
             )
         ]
@@ -133,6 +136,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         power_entity_id: str | None,
         additional_modes: bool,
         power_threshold: float,
+        default_preset: str,
         unique_id: str | None,
     ) -> None:
         """Initialize the climate device."""
@@ -163,6 +167,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         self._cur_temperature = None
         self._cur_power = None
         self._cur_mode = None
+        self._default_preset = self.get_preset_value(default_preset)
 
         self._attr_has_entity_name = has_entity_name
         self._attr_unique_id = (
@@ -307,6 +312,10 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set preset mode."""
+        value = self.get_preset_value(preset_mode)
+        await self._async_set_mode_value(value)
+
+    def get_preset_value(self, preset_mode) -> str:
         value = VALUE_OFF
         if preset_mode == PRESET_AWAY:
             value = VALUE_FROST
@@ -318,9 +327,9 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
             value = VALUE_COMFORT_1
         elif preset_mode == PRESET_COMFORT:
             value = VALUE_COMFORT
-        await self._async_set_mode_value(value)
-
+        return value
     # Modes
+
     @property
     def hvac_modes(self) -> list[HVACMode]:
         """List of available operation modes."""
@@ -330,7 +339,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         """Set new target hvac mode."""
         value = None
         if hvac_mode == HVACMode.HEAT:
-            value = VALUE_COMFORT
+            value = self._default_preset
         elif hvac_mode == HVACMode.OFF:
             value = VALUE_OFF
         await self._async_set_mode_value(value)
