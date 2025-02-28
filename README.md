@@ -11,6 +11,7 @@ This Home Assistant integration simplifies the setup of pilot wire modules for h
 - Utilizes the `select` entity to adjust the pilot wire preset modes.
 - Uses the `power` entity to detect whether the heating is on or off.
 - Configurable power threshold to determine heating state.
+- Configurable default power on preset.
 - Optional support for temperature `sensor` entities.
 
 ### Compatibility
@@ -62,8 +63,9 @@ If you prefer to use `yaml`, you can, but it's not recommended as more and more 
 | `temperature`      | string  | no       | Temperature sensor id (for display)                                                                                       |
 | `additional_modes` | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset)                                                                    |
 | `power_threshold`  | integer | no       | Power threshold (in watts) above which the heater is considered to be heating                                             |
-| `name`            | string  | no       | Name to use in the frontend                                                                                              |
-| `unique_id`        | string  | no       | An ID that uniquely identifies this climate. If two climates have the same unique ID, Home Assistant will raise an error |
+| `default_preset`   | string  | no       | Default power on preset (one value of the select)                                                                         |
+| `name`             | string  | no       | Name to use in the frontend                                                                                               |
+| `unique_id`        | string  | no       | An ID that uniquely identifies this climate. If two climates have the same unique ID, Home Assistant will raise an error  |
 
 The unique id is recommended to allow icon, entity_id or name changes from the UI.
 
@@ -76,6 +78,7 @@ climate:
     power: sensor.heater_power
     power_threshold: 10
     temperature: sensor.living_room_temperature
+    default_preset: eco
     additional_modes: true
   ```
 
