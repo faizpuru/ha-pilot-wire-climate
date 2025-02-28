@@ -10,14 +10,16 @@
           "temperature": "Temperature Sensor",
           "power": "Power Sensor",
           "additional_modes": "Additional Modes",
-          "power_threshold": "Power Threshold"
+          "power_threshold": "Power Threshold",
+          "default_preset": "Default preset"
         },
         "data_description": {
           "presets": "Select entity used to control the presets.",
           "temperature": "Temperature sensor that reflects the current temperature.",
           "power": "Power sensor used to monitor heater activity.",
           "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C).",
-          "power_threshold": "Power threshold above which the heater is considered to be heating."
+          "power_threshold": "Power threshold above which the heater is considered to be heating.",
+          "default_preset": "Default power-on preset"
         }
       }
     }
@@ -30,14 +32,16 @@
           "temperature": "Temperature Sensor",
           "power": "Power Sensor",
           "additional_modes": "Additional Modes",
-          "power_threshold": "Power Threshold"
+          "power_threshold": "Power Threshold",
+          "default_preset": "Default preset"
         },
         "data_description": {
           "presets": "Select entity used to control the presets.",
           "temperature": "Temperature sensor that reflects the current temperature.",
           "power": "Power sensor used to monitor heater activity.",
           "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C).",
-          "power_threshold": "Power threshold above which the heater is considered to be heating."
+          "power_threshold": "Power threshold above which the heater is considered to be heating.",
+          "default_preset": "Default power-on preset"
         }
       }
     }

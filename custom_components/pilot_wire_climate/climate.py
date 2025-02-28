@@ -54,7 +54,7 @@ PLATFORM_SCHEMA_COMMON = vol.Schema(
         vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_UNIQUE_ID): cv.string,
         vol.Optional(CONF_POWER_THRESHOLD): cv.positive_float,
-        vol.Optional(CONF_DEFAULT_PRESET, default=DEFAULT_DEFAULT_PRESET): vol.In([PRESET_COMFORT, PRESET_ECO, PRESET_AWAY, PRESET_COMFORT_1, PRESET_COMFORT_2]),
+        vol.Optional(CONF_DEFAULT_PRESET, default=DEFAULT_DEFAULT_PRESET): vol.In([PRESET_COMFORT, PRESET_COMFORT_1, PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY]),
     }
 )
 

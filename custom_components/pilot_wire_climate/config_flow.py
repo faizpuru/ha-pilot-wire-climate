@@ -46,8 +46,8 @@ OPTIONS_SCHEMA = {
     ),
     vol.Optional(CONF_DEFAULT_PRESET, default=DEFAULT_DEFAULT_PRESET): selector.SelectSelector(
         selector.SelectSelectorConfig(
-            options=[PRESET_COMFORT, PRESET_ECO, PRESET_AWAY,
-                     PRESET_COMFORT_1, PRESET_COMFORT_2],
+            options=[PRESET_COMFORT,  PRESET_COMFORT_1,
+                     PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY],
             mode=selector.SelectSelectorMode.DROPDOWN,
         )
     ),

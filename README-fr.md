@@ -10,6 +10,7 @@ Cette intégration pour Home Assistant simplifie l'installation de modules fil p
 - Convertit les entités `select` et `power` en une seule entité `climate`.
 - Utilise l'entité `select` pour ajuster les modes prédéfinis du fil pilote.
 - Utilise l'entité `power` pour détecter si le chauffage est actif.
+- Mode par défaut à l'allumage configurable.
 - Seuil de puissance configurable pour déterminer l'état de chauffe.
 - Prise en charge optionnelle pour une entité `sensor` de température.
 
@@ -61,6 +62,7 @@ Bien que vous puissiez utiliser `yaml`, il est recommandé d'utiliser l'interfac
 | `temperature`      | string  | non      | ID du capteur de température (pour l'affichage)                                                                                 |
 | `additional_modes` | boolean | non      | Prise en charge des 6 ordres (ajoute les modes Confort -1 et Confort -2)                                                        |
 | `power_threshold`  | integer | non      | Seuil de puissance (en watts) à partir duquel le radiateur est considéré en chauffe                                             |
+| `default_preset`   | string  | no       | Mode par d'faut à l'allumage (une valeur du select)                                                                             |
 | `name`             | string  | non      | Nom à afficher dans l'interface utilisateur.                                                                                    |
 | `unique_id`        | string  | non      | Un identifiant unique pour ce climat. Si deux climats ont le même identifiant unique, Home Assistant renverra une erreur.       |
 
@@ -75,6 +77,7 @@ climate:
     power: sensor.radiateur_puissance
     power_threshold: 10
     temperature: sensor.salon_temperature
+    default_preset: eco
     additional_modes: true
   ```
 
