@@ -145,12 +145,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         registry = er.async_get(hass)
         device_registry = dr.async_get(hass)
         preset_entity = registry.async_get(preset_entity_id)
-        select_state = hass.states.get(preset_entity_id)
-        options = select_state.attributes.get("options")
-        self.options_dict = {
-            get_value_key(option): option
-            for option in options
-        }
+        self.options_dict = None
         device_id = preset_entity.device_id if preset_entity else None
         has_entity_name = preset_entity.has_entity_name if preset_entity else False
 
@@ -216,6 +211,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
                 STATE_UNAVAILABLE,
                 STATE_UNKNOWN,
             ):
+                self.init_options_dict(mode_state)
                 self._async_update_mode(mode_state)
                 self.async_write_ha_state()
 
@@ -242,6 +238,16 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         else:
             self.hass.bus.async_listen_once(
                 EVENT_HOMEASSISTANT_START, _async_startup)
+
+    def init_options_dict(self, mode_state=None):
+        if self.options_dict is None:
+            if (mode_state is None):
+                mode_state = self.hass.states.get(self.preset_entity_id)
+            options = mode_state.attributes.get("options")
+            self.options_dict = {
+                get_value_key(option): option
+                for option in options
+            }
 
     @property
     def supported_features(self) -> ClimateEntityFeature:
@@ -302,6 +308,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
     @property
     def preset_mode(self) -> str | None:
         """Preset current mode."""
+        self.init_options_dict()
         value = self._cur_mode
         if value is None:
             return None
@@ -323,6 +330,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         await self._async_set_mode_value(value)
 
     def get_preset_value(self, preset_mode) -> str:
+        self.init_options_dict()
         value = self.options_dict[VALUE_OFF]
         if preset_mode == PRESET_AWAY:
             value = self.options_dict[VALUE_FROST]
@@ -344,6 +352,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set new target hvac mode."""
+        self.init_options_dict()
         value = None
         if hvac_mode == HVACMode.HEAT:
             value = self.options_dict[self._default_preset]
@@ -378,9 +387,11 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
     @callback
     def _async_mode_changed(self, event: Event[EventStateChangedData]) -> None:
         """Handle preset switch state changes."""
+
         new_state = event.data["new_state"]
         if new_state is None or new_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
             return
+        self.init_options_dict(new_state)
         self._async_update_mode(new_state)
         self.async_write_ha_state()
 
