@@ -16,11 +16,19 @@ from homeassistant.helpers import selector
 from homeassistant.helpers.schema_config_entry_flow import (
     SchemaConfigFlowHandler, SchemaFlowFormStep,
     wrapped_entity_config_entry_title)
-from homeassistant.components.climate import (PRESET_AWAY, PRESET_COMFORT,
-                                              PRESET_ECO, PRESET_NONE)
-
-from .const import (CONF_ADDITIONAL_MODES, CONF_POWER, CONF_PRESET,
-                    CONF_TEMP, DOMAIN, CONF_POWER_THRESHOLD, CONF_DEFAULT_PRESET, DEFAULT_DEFAULT_PRESET, PRESET_COMFORT_1, PRESET_COMFORT_2)
+from .const import (DOMAIN,
+                    CONF_ADDITIONAL_MODES,
+                    CONF_POWER,
+                    CONF_PRESET,
+                    CONF_TEMP,
+                    CONF_POWER_THRESHOLD,
+                    CONF_DEFAULT_PRESET,
+                    DEFAULT_DEFAULT_PRESET,
+                    VALUE_COMFORT,
+                    VALUE_COMFORT_1,
+                    VALUE_COMFORT_2,
+                    VALUE_ECO,
+                    VALUE_FROST)
 
 OPTIONS_SCHEMA = {
     vol.Optional(CONF_TEMP): selector.EntitySelector(
@@ -46,8 +54,8 @@ OPTIONS_SCHEMA = {
     ),
     vol.Optional(CONF_DEFAULT_PRESET, default=DEFAULT_DEFAULT_PRESET): selector.SelectSelector(
         selector.SelectSelectorConfig(
-            options=[PRESET_COMFORT,  PRESET_COMFORT_1,
-                     PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY],
+            options=[VALUE_COMFORT,  VALUE_COMFORT_1,
+                     VALUE_COMFORT_2, VALUE_ECO, VALUE_FROST],
             mode=selector.SelectSelectorMode.DROPDOWN,
         )
     ),
@@ -74,6 +82,8 @@ OPTIONS_FLOW = {
 
 class ConfigFlowHandler(SchemaConfigFlowHandler, domain=DOMAIN):
     """Handle a config or options flow."""
+    VERSION = 1
+    MINOR_VERSION = 2
 
     config_flow = CONFIG_FLOW
     options_flow = OPTIONS_FLOW

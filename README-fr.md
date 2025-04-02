@@ -62,7 +62,7 @@ Bien que vous puissiez utiliser `yaml`, il est recommandé d'utiliser l'interfac
 | `temperature`      | string  | non      | ID du capteur de température (pour l'affichage)                                                                                 |
 | `additional_modes` | boolean | non      | Prise en charge des 6 ordres (ajoute les modes Confort -1 et Confort -2)                                                        |
 | `power_threshold`  | integer | non      | Seuil de puissance (en watts) à partir duquel le radiateur est considéré en chauffe                                             |
-| `default_preset`   | string  | no       | Mode par d'faut à l'allumage (une valeur du select)                                                                             |
+| `default_preset`   | string  | no       | Mode par défaut à l'allumage:  "frost_protection", "eco", "comfort-2", "comfort-1" "comfort"                                                                             |
 | `name`             | string  | non      | Nom à afficher dans l'interface utilisateur.                                                                                    |
 | `unique_id`        | string  | non      | Un identifiant unique pour ce climat. Si deux climats ont le même identifiant unique, Home Assistant renverra une erreur.       |
 
