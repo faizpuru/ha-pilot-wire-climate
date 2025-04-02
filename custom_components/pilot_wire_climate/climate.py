@@ -30,19 +30,19 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from . import DOMAIN, PLATFORMS
-from .const import (CONF_ADDITIONAL_MODES, CONF_POWER, CONF_POWER_THRESHOLD, CONF_PRESET, CONF_TEMP,
-                    DEFAULT_NAME, PRESET_COMFORT_1,
-                    PRESET_COMFORT_2, CONF_DEFAULT_PRESET, DEFAULT_DEFAULT_PRESET)
+from .util import get_value_key
+from .const import (CONF_ADDITIONAL_MODES,
+                    CONF_POWER,
+                    CONF_POWER_THRESHOLD,
+                    CONF_PRESET,
+                    CONF_TEMP,
+                    DEFAULT_NAME,
+                    PRESET_COMFORT_1,
+                    PRESET_COMFORT_2,
+                    CONF_DEFAULT_PRESET,
+                    DEFAULT_DEFAULT_PRESET, VALUE_COMFORT, VALUE_COMFORT_1, VALUE_COMFORT_2, VALUE_ECO, VALUE_FROST, VALUE_OFF, VALUES_MAPPING)
 
 _LOGGER = logging.getLogger(__name__)
-
-
-VALUE_OFF = "off"
-VALUE_FROST = "frost_protection"
-VALUE_ECO = "eco"
-VALUE_COMFORT_2 = "comfort_-2"
-VALUE_COMFORT_1 = "comfort_-1"
-VALUE_COMFORT = "comfort"
 
 
 PLATFORM_SCHEMA_COMMON = vol.Schema(
@@ -54,7 +54,7 @@ PLATFORM_SCHEMA_COMMON = vol.Schema(
         vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_UNIQUE_ID): cv.string,
         vol.Optional(CONF_POWER_THRESHOLD): cv.positive_float,
-        vol.Optional(CONF_DEFAULT_PRESET, default=DEFAULT_DEFAULT_PRESET): vol.In([PRESET_COMFORT, PRESET_COMFORT_1, PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY]),
+        vol.Optional(CONF_DEFAULT_PRESET, default=DEFAULT_DEFAULT_PRESET): vol.In([VALUE_COMFORT, VALUE_COMFORT_1, VALUE_COMFORT_2, VALUE_ECO, VALUE_FROST]),
     }
 )
 
@@ -103,6 +103,7 @@ async def _async_setup_config(
     additional_modes: bool = config.get(CONF_ADDITIONAL_MODES)
     power_threshold: float = config.get(CONF_POWER_THRESHOLD)
     default_preset: str | None = config.get(CONF_DEFAULT_PRESET)
+
     async_add_entities(
         [
             PilotWireClimate(
@@ -144,6 +145,12 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         registry = er.async_get(hass)
         device_registry = dr.async_get(hass)
         preset_entity = registry.async_get(preset_entity_id)
+        select_state = hass.states.get(preset_entity_id)
+        options = select_state.attributes.get("options")
+        self.options_dict = {
+            get_value_key(option): option
+            for option in options
+        }
         device_id = preset_entity.device_id if preset_entity else None
         has_entity_name = preset_entity.has_entity_name if preset_entity else False
 
@@ -167,7 +174,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         self._cur_temperature = None
         self._cur_power = None
         self._cur_mode = None
-        self._default_preset = self.get_preset_value(default_preset)
+        self._default_preset = default_preset
 
         self._attr_has_entity_name = has_entity_name
         self._attr_unique_id = (
@@ -298,15 +305,15 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         value = self._cur_mode
         if value is None:
             return None
-        if value == VALUE_OFF:
+        if value == self.options_dict[VALUE_OFF]:
             return PRESET_NONE
-        if value == VALUE_FROST:
+        if value == self.options_dict[VALUE_FROST]:
             return PRESET_AWAY
-        if value == VALUE_ECO:
+        if value == self.options_dict[VALUE_ECO]:
             return PRESET_ECO
-        if value == VALUE_COMFORT_2 and self.additional_modes:
+        if value == self.options_dict[VALUE_COMFORT_2] and self.additional_modes:
             return PRESET_COMFORT_2
-        if value == VALUE_COMFORT_1 and self.additional_modes:
+        if value == self.options_dict[VALUE_COMFORT_1] and self.additional_modes:
             return PRESET_COMFORT_1
         return PRESET_COMFORT
 
@@ -316,17 +323,17 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         await self._async_set_mode_value(value)
 
     def get_preset_value(self, preset_mode) -> str:
-        value = VALUE_OFF
+        value = self.options_dict[VALUE_OFF]
         if preset_mode == PRESET_AWAY:
-            value = VALUE_FROST
+            value = self.options_dict[VALUE_FROST]
         elif preset_mode == PRESET_ECO:
-            value = VALUE_ECO
+            value = self.options_dict[VALUE_ECO]
         elif preset_mode == PRESET_COMFORT_2 and self.additional_modes:
-            value = VALUE_COMFORT_2
+            value = self.options_dict[VALUE_COMFORT_2]
         elif preset_mode == PRESET_COMFORT_1 and self.additional_modes:
-            value = VALUE_COMFORT_1
+            value = self.options_dict[VALUE_COMFORT_1]
         elif preset_mode == PRESET_COMFORT:
-            value = VALUE_COMFORT
+            value = self.options_dict[VALUE_COMFORT]
         return value
     # Modes
 
@@ -339,9 +346,9 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         """Set new target hvac mode."""
         value = None
         if hvac_mode == HVACMode.HEAT:
-            value = self._default_preset
+            value = self.options_dict[self._default_preset]
         elif hvac_mode == HVACMode.OFF:
-            value = VALUE_OFF
+            value = self.options_dict[VALUE_OFF]
         await self._async_set_mode_value(value)
 
     @property

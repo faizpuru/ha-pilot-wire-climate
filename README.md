@@ -63,9 +63,10 @@ If you prefer to use `yaml`, you can, but it's not recommended as more and more 
 | `temperature`      | string  | no       | Temperature sensor id (for display)                                                                                       |
 | `additional_modes` | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset)                                                                    |
 | `power_threshold`  | integer | no       | Power threshold (in watts) above which the heater is considered to be heating                                             |
-| `default_preset`   | string  | no       | Default power on preset (one value of the select)                                                                         |
+| `default_preset`   | string  | no       | Default 'power on' preset  from "frost_protection", "eco", "comfort-2", "comfort-1" "comfort"                                                                        |
 | `name`             | string  | no       | Name to use in the frontend                                                                                               |
 | `unique_id`        | string  | no       | An ID that uniquely identifies this climate. If two climates have the same unique ID, Home Assistant will raise an error  |
+
 
 The unique id is recommended to allow icon, entity_id or name changes from the UI.
 
