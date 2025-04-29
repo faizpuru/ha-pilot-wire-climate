@@ -23,12 +23,10 @@ L'intégration est compatible avec les appareils suivants ou tout thermostat con
 ## Installation
 
 ### Option 1 : Utilisation de HACS (Home Assistant Community Store)
-1. Accédez à HACS dans Home Assistant.
-2. Cliquez sur "Intégrations" et sélectionnez le menu à trois points en haut à droite.
-3. Sélectionnez "Dépôts personnalisés".
-4. Ajoutez l'URL du dépôt suivant : `https://github.com/faizpuru/ha-pilot-wire-climate`
-5. Choisissez "Integration" comme catégorie.
-6. Installez l'intégration, puis redémarrez Home Assistant.
+[![Ouvre Home Assistant et charge le repository dans HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=faizpuru&repository=ha-pilot-wire-climate&category=integration)
+
+1. Utilisez le bouton au dessus ou bien cherchez "Wire Pilot Climate" dans HACS
+2. Installez l'intégration, puis redémarrez Home Assistant.
 
 ### Option 2 : Installation manuelle
 1. Copiez les fichiers de l'intégration dans le répertoire des composants personnalisés de Home Assistant.
