@@ -243,6 +243,8 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         if self.options_dict is None:
             if (mode_state is None):
                 mode_state = self.hass.states.get(self.preset_entity_id)
+            if mode_state is None:
+                return
             options = mode_state.attributes.get("options")
             self.options_dict = {
                 get_value_key(option): option
