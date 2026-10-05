@@ -36,6 +36,7 @@ from .const import (CONF_ADDITIONAL_MODES,
                     CONF_POWER_THRESHOLD,
                     CONF_PRESET,
                     CONF_TEMP,
+                    CONF_HUMIDITY,
                     DEFAULT_NAME,
                     PRESET_COMFORT_1,
                     PRESET_COMFORT_2,
@@ -49,6 +50,7 @@ PLATFORM_SCHEMA_COMMON = vol.Schema(
     {
         vol.Required(CONF_PRESET): cv.entity_id,
         vol.Optional(CONF_TEMP): cv.entity_id,
+        vol.Optional(CONF_HUMIDITY): cv.entity_id,
         vol.Optional(CONF_POWER): cv.entity_id,
         vol.Optional(CONF_ADDITIONAL_MODES, default=True): cv.boolean,
         vol.Optional(CONF_NAME): cv.string,
@@ -99,6 +101,7 @@ async def _async_setup_config(
     name: str | None = config.get(CONF_NAME)
     preset_entity_id: str = config.get(CONF_PRESET)
     temp_entity_id: str | None = config.get(CONF_TEMP)
+    humidity_entity_id: str | None = config.get(CONF_HUMIDITY)
     power_entity_id: str | None = config.get(CONF_POWER)
     additional_modes: bool = config.get(CONF_ADDITIONAL_MODES)
     power_threshold: float = config.get(CONF_POWER_THRESHOLD)
@@ -111,6 +114,7 @@ async def _async_setup_config(
                 name,
                 preset_entity_id,
                 temp_entity_id,
+                humidity_entity_id,
                 power_entity_id,
                 additional_modes,
                 power_threshold,
@@ -134,6 +138,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         name: str | None,
         preset_entity_id: str,
         temp_entity_id: str | None,
+        humidity_entity_id: str | None,
         power_entity_id: str | None,
         additional_modes: bool,
         power_threshold: float,
@@ -163,10 +168,12 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
 
         self.preset_entity_id = preset_entity_id
         self.temp_entity_id = temp_entity_id
+        self.humidity_entity_id = humidity_entity_id
         self.power_entity_id = power_entity_id
         self.additional_modes = additional_modes
         self._power_threshold = power_threshold
         self._cur_temperature = None
+        self._cur_humidity = None
         self._cur_power = None
         self._cur_mode = None
         self._default_preset = default_preset
@@ -186,6 +193,14 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
                 async_track_state_change_event(
                     self.hass, [
                         self.temp_entity_id], self._async_temp_changed
+                )
+            )
+
+        if self.humidity_entity_id is not None:
+            self.async_on_remove(
+                async_track_state_change_event(
+                    self.hass, [
+                        self.humidity_entity_id], self._async_humidity_changed
                 )
             )
 
@@ -222,6 +237,15 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
                     STATE_UNKNOWN,
                 ):
                     self._async_update_temp(temp_state)
+                    self.async_write_ha_state()
+
+            if self.humidity_entity_id is not None:
+                humidity_state = self.hass.states.get(self.humidity_entity_id)
+                if humidity_state and humidity_state.state not in (
+                    STATE_UNAVAILABLE,
+                    STATE_UNKNOWN,
+                ):
+                    self._async_update_humidity(humidity_state)
                     self.async_write_ha_state()
 
             if self.power_entity_id is not None:
@@ -290,6 +314,11 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
     def current_temperature(self) -> float | None:
         """Return the sensor temperature."""
         return self._cur_temperature
+
+    @property
+    def current_humidity(self) -> float | None:
+        """Return the sensor humidity."""
+        return self._cur_humidity
 
     # Presets
 
@@ -414,6 +443,25 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
             self._cur_temperature = cur_temp
         except ValueError as ex:
             _LOGGER.error("Unable to update from temperature sensor: %s", ex)
+
+    async def _async_humidity_changed(self, event: Event[EventStateChangedData]) -> None:
+        """Handle humidity changes."""
+        new_state = event.data["new_state"]
+        if new_state is None or new_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
+            return
+
+        self._async_update_humidity(new_state)
+        self.async_write_ha_state()
+
+    @callback
+    def _async_update_humidity(self, state: State):
+        try:
+            cur_humidity = float(state.state)
+            if not math.isfinite(cur_humidity):
+                raise ValueError(f"Sensor has illegal state {state.state}")
+            self._cur_humidity = cur_humidity
+        except ValueError as ex:
+            _LOGGER.error("Unable to update from humidity sensor: %s", ex)
 
     @callback
     def _async_update_power(self, state: State):

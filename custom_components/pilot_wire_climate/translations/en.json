@@ -8,6 +8,7 @@
         "data": {
           "presets": "Select Entity",
           "temperature": "Temperature Sensor",
+          "humidity": "Humidity Sensor",
           "power": "Power Sensor",
           "additional_modes": "Additional Modes",
           "power_threshold": "Power Threshold",
@@ -16,6 +17,7 @@
         "data_description": {
           "presets": "Select entity used to control the presets.",
           "temperature": "Temperature sensor that reflects the current temperature.",
+          "humidity": "Humidity sensor that reflects the current humidity.",
           "power": "Power sensor used to monitor heater activity.",
           "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C).",
           "power_threshold": "Power threshold above which the heater is considered to be heating.",
@@ -30,6 +32,7 @@
         "data": {
           "presets": "Select Entity",
           "temperature": "Temperature Sensor",
+          "humidity": "Humidity Sensor",
           "power": "Power Sensor",
           "additional_modes": "Additional Modes",
           "power_threshold": "Power Threshold",
@@ -38,6 +41,7 @@
         "data_description": {
           "presets": "Select entity used to control the presets.",
           "temperature": "Temperature sensor that reflects the current temperature.",
+          "humidity": "Humidity sensor that reflects the current humidity.",
           "power": "Power sensor used to monitor heater activity.",
           "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C).",
           "power_threshold": "Power threshold above which the heater is considered to be heating.",
