@@ -5,7 +5,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device import async_entity_id_to_device_id
-from homeassistant.helpers.helper_integration import async_remove_helper_devices
+from homeassistant.helpers.helper_integration import (
+    async_handle_source_entity_changes, async_remove_helper_devices)
 from .const import CONF_DEFAULT_PRESET, CONF_PRESET, DEFAULT_DEFAULT_PRESET, DOMAIN, VALUES_MAPPING, OLD_PRESET_VALUE_MAPPING
 
 PLATFORMS = [Platform.CLIMATE]
@@ -14,6 +15,24 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up from a config entry."""
+
+    def set_preset_entity_id(source_entity_id: str) -> None:
+        # The update listener reloads the entry with the new options
+        hass.config_entries.async_update_entry(
+            entry, options={**entry.options, CONF_PRESET: source_entity_id})
+
+    # Follow the select entity when it is renamed or moved to another device
+    entry.async_on_unload(
+        async_handle_source_entity_changes(
+            hass,
+            helper_config_entry_id=entry.entry_id,
+            set_source_entity_id_or_uuid=set_preset_entity_id,
+            source_device_id=async_entity_id_to_device_id(
+                hass, entry.options[CONF_PRESET]),
+            source_entity_id_or_uuid=entry.options[CONF_PRESET],
+        )
+    )
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(
         config_entry_update_listener))
@@ -40,7 +59,8 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
     if default_preset is None:
         options[CONF_DEFAULT_PRESET] = DEFAULT_DEFAULT_PRESET
     elif default_preset not in VALUES_MAPPING:
-        options[CONF_DEFAULT_PRESET] = OLD_PRESET_VALUE_MAPPING[default_preset]
+        options[CONF_DEFAULT_PRESET] = OLD_PRESET_VALUE_MAPPING.get(
+            default_preset, DEFAULT_DEFAULT_PRESET)
 
     if config_entry.minor_version < 3:
         # Earlier versions put the source device's identifiers in the climate
