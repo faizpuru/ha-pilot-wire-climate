@@ -2,5 +2,6 @@
   "name": "Wire Pilot Climate",
   "render_readme": true,
   "zip_release": true,
-  "filename": "pilot_wire_climate.zip"
+  "filename": "pilot_wire_climate.zip",
+  "homeassistant": "2026.8.0"
 }

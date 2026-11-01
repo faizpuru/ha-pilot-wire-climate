@@ -22,6 +22,9 @@ L'intégration est compatible avec les appareils suivants ou tout thermostat con
 
 ## Installation
 
+> [!IMPORTANT]
+> Nécessite Home Assistant 2026.8.0 ou plus récent.
+
 ### Option 1 : Utilisation de HACS (Home Assistant Community Store)
 [![Ouvre Home Assistant et charge le repository dans HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=faizpuru&repository=ha-pilot-wire-climate&category=integration)
 

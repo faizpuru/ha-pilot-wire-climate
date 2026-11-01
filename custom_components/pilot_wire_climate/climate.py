@@ -20,9 +20,9 @@ from homeassistant.const import (ATTR_ENTITY_ID, CONF_NAME, CONF_UNIQUE_ID,
                                  STATE_UNKNOWN, UnitOfTemperature)
 from homeassistant.core import (CoreState, Event, EventStateChangedData,
                                 HomeAssistant, State, callback)
-from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.device import async_entity_id_to_device
+from homeassistant.helpers.device_registry import AnyDeviceEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.reload import async_setup_reload_service
@@ -74,6 +74,8 @@ async def async_setup_entry(
         PLATFORM_SCHEMA_COMMON(dict(config_entry.options)),
         config_entry.entry_id,
         async_add_entities,
+        device=async_entity_id_to_device(
+            hass, config_entry.options[CONF_PRESET]),
     )
 
 
@@ -96,6 +98,7 @@ async def _async_setup_config(
     config: ConfigType,
     unique_id: str | None,
     async_add_entities: AddEntitiesCallback,
+    device: AnyDeviceEntry | None = None,
 ) -> None:
     """Set up the pilot wire climate platform."""
     name: str | None = config.get(CONF_NAME)
@@ -120,6 +123,7 @@ async def _async_setup_config(
                 power_threshold,
                 default_preset,
                 unique_id,
+                device,
             )
         ]
     )
@@ -144,22 +148,16 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         power_threshold: float,
         default_preset: str,
         unique_id: str | None,
+        device: AnyDeviceEntry | None = None,
     ) -> None:
         """Initialize the climate device."""
 
         registry = er.async_get(hass)
-        device_registry = dr.async_get(hass)
         preset_entity = registry.async_get(preset_entity_id)
         self.options_dict = None
-        device_id = preset_entity.device_id if preset_entity else None
         has_entity_name = preset_entity.has_entity_name if preset_entity else False
 
-        self._device_id = device_id
-        if device_id and (device := device_registry.async_get(device_id)):
-            self._attr_device_info = DeviceInfo(
-                connections=device.connections,
-                identifiers=device.identifiers,
-            )
+        self.device_entry = device
 
         if name:
             self._attr_name = name

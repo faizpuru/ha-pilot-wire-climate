@@ -22,6 +22,9 @@ The integration is compatible with the following devices or any climate manageab
 
 ## Installation
 
+> [!IMPORTANT]
+> Requires Home Assistant 2026.8.0 or later.
+
 ### Option 1: Using HACS (Home Assistant Community Store)
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=faizpuru&repository=ha-pilot-wire-climate&category=integration)
 
