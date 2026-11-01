@@ -12,7 +12,7 @@ Cette intégration pour Home Assistant simplifie l'installation de modules fil p
 - Utilise l'entité `power` pour détecter si le chauffage est actif.
 - Mode par défaut à l'allumage configurable.
 - Seuil de puissance configurable pour déterminer l'état de chauffe.
-- Prise en charge optionnelle pour une entité `sensor` de température.
+- Prise en charge optionnelle pour des entité `sensor` de température et d'humidité.
 
 ### Compatibilité
 L'intégration est compatible avec les appareils suivants ou tout thermostat contrôlable avec une entité de type select:
@@ -58,6 +58,7 @@ Bien que vous puissiez utiliser `yaml`, il est recommandé d'utiliser l'interfac
 | `presets`          | string  | oui      | ID de l'entité select pour ajuster les modes prédéfinis du fil pilote                                                           |
 | `power`            | string  | non      | ID de l'entité pour détecter si le chauffage est actif ou non                                                                   |
 | `temperature`      | string  | non      | ID du capteur de température (pour l'affichage)                                                                                 |
+| `humidity`         | string  | non      | ID du capteur d'humidité (pour l'affichage)                                                                                     |
 | `additional_modes` | boolean | non      | Prise en charge des 6 ordres (ajoute les modes Confort -1 et Confort -2)                                                        |
 | `power_threshold`  | integer | non      | Seuil de puissance (en watts) à partir duquel le radiateur est considéré en chauffe                                             |
 | `default_preset`   | string  | no       | Mode par défaut à l'allumage:  "frost_protection", "eco", "comfort-2", "comfort-1" "comfort"                                                                             |
@@ -75,6 +76,7 @@ climate:
     power: sensor.radiateur_puissance
     power_threshold: 10
     temperature: sensor.salon_temperature
+    humidity: sensor.salon_humidite
     default_preset: eco
     additional_modes: true
   ```

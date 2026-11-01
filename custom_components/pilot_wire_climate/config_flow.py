@@ -21,6 +21,7 @@ from .const import (DOMAIN,
                     CONF_POWER,
                     CONF_PRESET,
                     CONF_TEMP,
+                    CONF_HUMIDITY,
                     CONF_POWER_THRESHOLD,
                     CONF_DEFAULT_PRESET,
                     DEFAULT_DEFAULT_PRESET,
@@ -35,6 +36,12 @@ OPTIONS_SCHEMA = {
         selector.EntitySelectorConfig(
             domain=SENSOR_DOMAIN,
             device_class=SensorDeviceClass.TEMPERATURE
+        )
+    ),
+    vol.Optional(CONF_HUMIDITY): selector.EntitySelector(
+        selector.EntitySelectorConfig(
+            domain=SENSOR_DOMAIN,
+            device_class=SensorDeviceClass.HUMIDITY
         )
     ),
     vol.Optional(CONF_POWER): selector.EntitySelector(

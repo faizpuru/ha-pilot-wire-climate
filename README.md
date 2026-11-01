@@ -12,7 +12,7 @@ This Home Assistant integration simplifies the setup of pilot wire modules for h
 - Uses the `power` entity to detect whether the heating is on or off.
 - Configurable power threshold to determine heating state.
 - Configurable default power on preset.
-- Optional support for temperature `sensor` entities.
+- Optional support for temperature and humidity `sensor` entities.
 
 ### Compatibility
 The integration is compatible with the following devices or any climate manageable with a select entity :
@@ -59,6 +59,7 @@ If you prefer to use `yaml`, you can, but it's not recommended as more and more 
 | `presets`          | string  | yes      | Select entity id to adjust the pilot wire preset modes                                                                    |
 | `power`            | string  | no       | Power sensor to detect whether the heating is on or off                                                                   |
 | `temperature`      | string  | no       | Temperature sensor id (for display)                                                                                       |
+| `humidity`         | string  | no       | Humidity sensor id (for display)                                                                                          |
 | `additional_modes` | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset)                                                                    |
 | `power_threshold`  | integer | no       | Power threshold (in watts) above which the heater is considered to be heating                                             |
 | `default_preset`   | string  | no       | Default 'power on' preset  from "frost_protection", "eco", "comfort-2", "comfort-1" "comfort"                                                                        |
@@ -77,6 +78,7 @@ climate:
     power: sensor.heater_power
     power_threshold: 10
     temperature: sensor.living_room_temperature
+    humidity: sensor.living_room_humidity
     default_preset: eco
     additional_modes: true
   ```
