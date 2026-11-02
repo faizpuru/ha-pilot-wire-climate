@@ -20,13 +20,13 @@ from homeassistant.const import (ATTR_ENTITY_ID, CONF_NAME, CONF_UNIQUE_ID,
                                  STATE_UNKNOWN, UnitOfTemperature)
 from homeassistant.core import (CoreState, Event, EventStateChangedData,
                                 HomeAssistant, State, callback)
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device import async_entity_id_to_device
 from homeassistant.helpers.device_registry import AnyDeviceEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.reload import async_setup_reload_service
-from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from . import DOMAIN, PLATFORMS
@@ -44,6 +44,16 @@ from .const import (CONF_ADDITIONAL_MODES,
                     DEFAULT_DEFAULT_PRESET, VALUE_COMFORT, VALUE_COMFORT_1, VALUE_COMFORT_2, VALUE_ECO, VALUE_FROST, VALUE_OFF, VALUES_MAPPING)
 
 _LOGGER = logging.getLogger(__name__)
+
+PRESET_VALUES = {
+    PRESET_COMFORT: VALUE_COMFORT,
+    PRESET_COMFORT_1: VALUE_COMFORT_1,
+    PRESET_COMFORT_2: VALUE_COMFORT_2,
+    PRESET_ECO: VALUE_ECO,
+    PRESET_AWAY: VALUE_FROST,
+    PRESET_NONE: VALUE_OFF,
+}
+ADDITIONAL_VALUES = (VALUE_COMFORT_1, VALUE_COMFORT_2)
 
 
 PLATFORM_SCHEMA_COMMON = vol.Schema(
@@ -129,7 +139,7 @@ async def _async_setup_config(
     )
 
 
-class PilotWireClimate(ClimateEntity, RestoreEntity):
+class PilotWireClimate(ClimateEntity):
     """Representation of a Pilot Wire device."""
 
     _attr_should_poll = False
@@ -154,7 +164,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
 
         registry = er.async_get(hass)
         preset_entity = registry.async_get(preset_entity_id)
-        self.options_dict = None
+        self.options_dict: dict[str, str] = {}
         has_entity_name = preset_entity.has_entity_name if preset_entity else False
 
         self.device_entry = device
@@ -224,7 +234,6 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
                 STATE_UNAVAILABLE,
                 STATE_UNKNOWN,
             ):
-                self.init_options_dict(mode_state)
                 self._async_update_mode(mode_state)
                 self.async_write_ha_state()
 
@@ -261,17 +270,14 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
             self.hass.bus.async_listen_once(
                 EVENT_HOMEASSISTANT_START, _async_startup)
 
-    def init_options_dict(self, mode_state=None):
-        if self.options_dict is None:
-            if (mode_state is None):
-                mode_state = self.hass.states.get(self.preset_entity_id)
-            if mode_state is None:
-                return
-            options = mode_state.attributes.get("options")
-            self.options_dict = {
-                get_value_key(option): option
-                for option in options
-            }
+    @property
+    def available(self) -> bool:
+        """Return whether the select entity is available."""
+        state = self.hass.states.get(self.preset_entity_id)
+        return state is not None and state.state not in (
+            STATE_UNAVAILABLE,
+            STATE_UNKNOWN,
+        )
 
     @property
     def supported_features(self) -> ClimateEntityFeature:
@@ -287,7 +293,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
 
     @property
     def hvac_action(self) -> str:
-        """Return the unit of measurement."""
+        """Return the current heating action from the power sensor."""
         value = None
         if self._cur_power is not None:
             if self._cur_power > self.power_threshold:
@@ -299,8 +305,8 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         return value
 
     @property
-    def power_threshold(self) -> str:
-        """Return the unit of measurement."""
+    def power_threshold(self) -> float:
+        """Return the power above which the heater is heating."""
         return 0 if self._power_threshold is None else self._power_threshold
 
     @property
@@ -322,36 +328,31 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
 
     @property
     def preset_modes(self) -> list[str] | None:
-        """List of available preset modes."""
-        if self.additional_modes:
-            return [
-                PRESET_COMFORT,
-                PRESET_COMFORT_1,
-                PRESET_COMFORT_2,
-                PRESET_ECO,
-                PRESET_AWAY,
-                PRESET_NONE,
-            ]
-        return [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY, PRESET_NONE]
+        """List the presets the select entity has an option for."""
+        presets = [
+            preset for preset, value in PRESET_VALUES.items()
+            if self.additional_modes or value not in ADDITIONAL_VALUES
+        ]
+        if not self.options_dict:
+            # Options are not known until the select entity is available
+            return presets
+        return [
+            preset for preset in presets
+            if PRESET_VALUES[preset] in self.options_dict
+        ]
 
     @property
     def preset_mode(self) -> str | None:
         """Preset current mode."""
-        self.init_options_dict()
-        value = self._cur_mode
-        if value is None:
+        if self._cur_mode is None:
             return None
-        if value == self.options_dict[VALUE_OFF]:
-            return PRESET_NONE
-        if value == self.options_dict[VALUE_FROST]:
-            return PRESET_AWAY
-        if value == self.options_dict[VALUE_ECO]:
-            return PRESET_ECO
-        if value == self.options_dict[VALUE_COMFORT_2] and self.additional_modes:
-            return PRESET_COMFORT_2
-        if value == self.options_dict[VALUE_COMFORT_1] and self.additional_modes:
-            return PRESET_COMFORT_1
-        return PRESET_COMFORT
+        value = get_value_key(self._cur_mode)
+        if value in ADDITIONAL_VALUES and not self.additional_modes:
+            return PRESET_COMFORT
+        return next(
+            (preset for preset, v in PRESET_VALUES.items() if v == value),
+            PRESET_COMFORT,
+        )
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set preset mode."""
@@ -359,19 +360,15 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         await self._async_set_mode_value(value)
 
     def get_preset_value(self, preset_mode) -> str:
-        self.init_options_dict()
-        value = self.options_dict[VALUE_OFF]
-        if preset_mode == PRESET_AWAY:
-            value = self.options_dict[VALUE_FROST]
-        elif preset_mode == PRESET_ECO:
-            value = self.options_dict[VALUE_ECO]
-        elif preset_mode == PRESET_COMFORT_2 and self.additional_modes:
-            value = self.options_dict[VALUE_COMFORT_2]
-        elif preset_mode == PRESET_COMFORT_1 and self.additional_modes:
-            value = self.options_dict[VALUE_COMFORT_1]
-        elif preset_mode == PRESET_COMFORT:
-            value = self.options_dict[VALUE_COMFORT]
-        return value
+        """Return the select option for a preset."""
+        return self._get_option(PRESET_VALUES.get(preset_mode))
+
+    def _get_option(self, value: str | None) -> str:
+        """Return the select option for a pilot wire order."""
+        if value not in self.options_dict:
+            raise ServiceValidationError(
+                f"{self.preset_entity_id} has no option for {value}")
+        return self.options_dict[value]
     # Modes
 
     @property
@@ -381,12 +378,14 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set new target hvac mode."""
-        self.init_options_dict()
-        value = None
         if hvac_mode == HVACMode.HEAT:
-            value = self.options_dict[self._default_preset]
-        elif hvac_mode == HVACMode.OFF:
-            value = self.options_dict[VALUE_OFF]
+            # Fall back to Comfort when the select has no default preset option
+            default = self._default_preset
+            if default not in self.options_dict:
+                default = VALUE_COMFORT
+            value = self._get_option(default)
+        else:
+            value = self._get_option(VALUE_OFF)
         await self._async_set_mode_value(value)
 
     @property
@@ -406,7 +405,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         self.async_write_ha_state()
 
     async def _async_power_changed(self, event: Event[EventStateChangedData]) -> None:
-        """Handle temperature changes."""
+        """Handle power changes."""
         new_state = event.data["new_state"]
         if new_state is None or new_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
             return
@@ -418,19 +417,19 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
         """Handle preset switch state changes."""
 
         new_state = event.data["new_state"]
-        if new_state is None or new_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
-            return
-        self.init_options_dict(new_state)
-        self._async_update_mode(new_state)
+        # Also write the state when the select goes away, to report unavailable
+        if new_state is not None and new_state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN):
+            self._async_update_mode(new_state)
         self.async_write_ha_state()
 
     @callback
     def _async_update_mode(self, state: State):
-        try:
-            cur_mode = str(state.state)
-            self._cur_mode = cur_mode
-        except ValueError as ex:
-            _LOGGER.error("Unable to update from mode sensor: %s", ex)
+        self._cur_mode = state.state
+        self.options_dict = {
+            value: option
+            for option in state.attributes.get("options") or []
+            if (value := get_value_key(option)) is not None
+        }
 
     @callback
     def _async_update_temp(self, state: State):
@@ -469,7 +468,7 @@ class PilotWireClimate(ClimateEntity, RestoreEntity):
                 raise ValueError(f"Sensor has illegal state {state.state}")
             self._cur_power = cur_power
         except ValueError as ex:
-            _LOGGER.error("Unable to update from temperature sensor: %s", ex)
+            _LOGGER.error("Unable to update from power sensor: %s", ex)
 
     async def _async_set_mode_value(self, value):
         data = {
