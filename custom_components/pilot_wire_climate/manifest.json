@@ -7,12 +7,11 @@
   "config_flow": true,
   "dependencies": [
     "sensor",
-    "select",
-    "mqtt"
+    "select"
   ],
   "documentation": "https://github.com/faizpuru/ha-pilot-wire-climate",
   "integration_type": "helper",
-  "iot_class": "local_polling",
+  "iot_class": "calculated",
   "issue_tracker": "https://github.com/faizpuru/ha-pilot-wire-climate/issues",
   "version": "1.0.3"
 }
